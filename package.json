@@ -33,7 +33,7 @@
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^9.1.1",
+    "@commitlint/config-conventional": "^11.0.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.0.23",
     "commitlint": "^11.0.0",
