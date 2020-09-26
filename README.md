@@ -1,44 +1,68 @@
-# `typescript-library-starter`
+# `@47ng/simple-e2ee`
 
-[![NPM](https://img.shields.io/npm/v/typescript-library-starter?color=red)](https://www.npmjs.com/package/typescript-library-starter)
-[![MIT License](https://img.shields.io/github/license/47ng/typescript-library-starter.svg?color=blue)](https://github.com/47ng/typescript-library-starter/blob/master/LICENSE)
-[![Travis CI Build](https://img.shields.io/travis/com/47ng/typescript-library-starter.svg)](https://travis-ci.com/47ng/typescript-library-starter)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=47ng/typescript-library-starter)](https://dependabot.com)
-[![Average issue resolution time](https://isitmaintained.com/badge/resolution/47ng/typescript-library-starter.svg)](https://isitmaintained.com/project/47ng/typescript-library-starter)
-[![Number of open issues](https://isitmaintained.com/badge/open/47ng/typescript-library-starter.svg)](https://isitmaintained.com/project/47ng/typescript-library-starter)
+[![NPM](https://img.shields.io/npm/v/@47ng/simple-e2ee?color=red)](https://www.npmjs.com/package/@47ng/simple-e2ee)
+[![MIT License](https://img.shields.io/github/license/47ng/simple-e2ee.svg?color=blue)](https://github.com/47ng/simple-e2ee/blob/next/LICENSE)
+[![Continuous Integration](https://github.com/47ng/simple-e2ee/workflows/Continuous%20Integration/badge.svg?branch=next)](https://github.com/47ng/simple-e2ee/actions)
+[![Coverage Status](https://coveralls.io/repos/github/47ng/simple-e2ee/badge.svg?branch=next)](https://coveralls.io/github/47ng/simple-e2ee?branch=next)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=47ng/simple-e2ee)](https://dependabot.com)
 
-Template repository for TypeScript libraries.
+Simple end-to-end encryption for web apps. Inspired from [Excalidraw](https://excalidraw.com) and [Firefox Send](https://github.com/mozilla/send) (RIP).
+
+## How it works
+
+You encrypt your data in the browser, send the encrypted data
+to a server, and use the hash part of the URL (which never
+hits the server) to share the key with someone else.
+
+On the other side, the recipient obtains the key from the URL,
+the payload from the server and decrypts the data.
+
+This library does not handle any of the server upload/download
+side, it's up to you. It only deals with encryption, decryption
+and moving keys in and out of URLs.
 
 ## Installation
 
-✂️---
-_Cut here_
-
-1. [Use this repository as a template](https://github.com/47ng/typescript-library-starter/generate) to create your own.
-2. Replace all mentions of `typescript-library-starter` with the name
-   of your package.
-3. Setup Travis CI by adding an NPM deploy token and a Slack channel token:
-
-```zsh
-# Copy your NPM deploy token to clipboard, then:
-$ travis encrypt $(pbpaste) --add deploy.api_key --com
-
-# Copy your Slack channel token to clipboard, then:
-$ travis encrypt $(pbpaste) --add notifications.slack.rooms --com
-```
-
---- ✂️
-
 ```shell
-$ yarn add typescript-library-starter
+$ yarn add @47ng/simple-e2ee
 # or
-$ npm i typescript-library-starter
+$ npm i @47ng/simple-e2ee
 ```
 
 ## Usage
 
-## Configuration
+```ts
+import {
+  encrypt,
+  decrypt,
+  applyKeyToURL,
+  getKeyFromURL
+} from '@47ng/simple-e2ee'
+
+// Before sending data to the server, encrypt it:
+const { payload, key } = encrypt(
+  "whatever you want, as long as it's JSON-serialisable"
+)
+
+// Upload `payload` to the server
+// Stick the key onto the current URL:
+const shareURL = applyKeyToURL(key)
+
+// Optionally, apply the key to another URL
+// (example, with an ID returned from the server):
+const shareURL = applyKeyToURL(key, `https://example.com/share/${id}`)
+
+// On the other side, get the key from the current URL,
+// and the payload from the server:
+const key = getKeyFromURL()
+const message = decrypt(payload, key)
+
+// Optionally, obtain the key from any URL:
+const key = getKeyFromURL(
+  `https://example.com/share/foo#KatLceVEOM2znzX_FGPKu6Zz1adWkhlq9b2R9WRjUsM=`
+)
+```
 
 ## License
 
-[MIT](https://github.com/47ng/typescript-library-starter/blob/master/LICENSE) - Made with ❤️ by [François Best](https://francoisbest.com).
+[MIT](https://github.com/47ng/simple-e2ee/blob/master/LICENSE) - Made with ❤️ by [François Best](https://francoisbest.com).
