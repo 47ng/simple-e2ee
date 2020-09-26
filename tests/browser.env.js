@@ -1,5 +1,4 @@
 const Environment = require('jest-environment-jsdom')
-const { Crypto } = require('node-webcrypto-ossl')
 
 /**
  * JSDOM does not include TextEncoder / TextDecoder by default
@@ -15,6 +14,5 @@ module.exports = class CustomTestEnvironment extends Environment {
       const { TextDecoder } = require('util')
       this.global.TextDecoder = TextDecoder
     }
-    this.global.window.crypto = new Crypto()
   }
 }
