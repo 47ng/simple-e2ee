@@ -1,6 +1,10 @@
 **/*.test.ts
 tsconfig.json
 nodemon.json
-.env
+.env*
 .volumes/
 yarn-error.log
+coverage/
+tests/
+.github/
+.dependabot/
