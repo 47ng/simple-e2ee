@@ -1,7 +1,6 @@
 import nacl from 'tweetnacl'
 import b64 from '@47ng/codec/dist/b64'
 import utf8 from '@47ng/codec/dist/utf8'
-import { URL } from 'url'
 
 export function encrypt<T>(message: T) {
   const key = nacl.randomBytes(nacl.secretbox.keyLength)
