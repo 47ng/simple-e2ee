@@ -3,6 +3,7 @@
   "version": "0.0.0-semantically-released",
   "description": "Simple E2EE for web apps",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "author": {
     "name": "François Best",
