@@ -36,7 +36,8 @@ import {
   encrypt,
   decrypt,
   applyKeyToURL,
-  getKeyFromURL
+  getKeyFromURL,
+  generateKey
 } from '@47ng/simple-e2ee'
 
 // Before sending data to the server, encrypt it:
@@ -61,6 +62,12 @@ const message = decrypt(payload, key)
 const key = getKeyFromURL(
   `https://example.com/share/foo#KatLceVEOM2znzX_FGPKu6Zz1adWkhlq9b2R9WRjUsM=`
 )
+
+// Encrypt related pieces of content with the same key:
+const payload = encrypt('some more data', key)
+
+// Generate a key for later use:
+const key = generateKey()
 ```
 
 ## License
