@@ -8,6 +8,9 @@ updates:
       timezone: Europe/Paris
     assignees:
       - franky47
+    ignore:
+      - dependency-name: "husky"
+        versions: ["^5.x"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
