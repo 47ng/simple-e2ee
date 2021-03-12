@@ -1,9 +1,9 @@
 import {
-  encrypt,
-  decrypt,
-  PAYLOAD_REGEX_V1,
   applyKeyToURL,
-  getKeyFromURL
+  decrypt,
+  encrypt,
+  getKeyFromURL,
+  PAYLOAD_REGEX_V1
 } from './index'
 
 test('encrypt generates a key and a payload', () => {
@@ -27,6 +27,24 @@ test('Encrypt => Decrypt', () => {
   testEncryptionDecryption(null)
   testEncryptionDecryption(42)
   testEncryptionDecryption({ hello: 'world' })
+})
+
+test('Known vectors', () => {
+  expect(
+    decrypt(
+      '1.TWgAHXRv8cKAjBsYoUB94xP6h3rF4WuT._MYXkn0uSIU0BS9BrBpQxWQZ_NfF1Qt9p7vuLV0C7A',
+      'uI8_9QBb3ANmUr2ftZLPeTuJclX_CnG54dA5AbPF99c'
+    )
+  ).toEqual('Hello, World!')
+})
+
+test('Known vectors accept base64 padding', () => {
+  expect(
+    decrypt(
+      '1.TWgAHXRv8cKAjBsYoUB94xP6h3rF4WuT._MYXkn0uSIU0BS9BrBpQxWQZ_NfF1Qt9p7vuLV0C7A==',
+      'uI8_9QBb3ANmUr2ftZLPeTuJclX_CnG54dA5AbPF99c='
+    )
+  ).toEqual('Hello, World!')
 })
 
 test('Failure - Invalid payload', () => {

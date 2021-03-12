@@ -1,18 +1,69 @@
-import nacl from 'tweetnacl'
 import b64 from '@47ng/codec/dist/b64'
 import utf8 from '@47ng/codec/dist/utf8'
+import nacl from 'tweetnacl'
 
-export function encrypt<T>(message: T) {
-  const key = nacl.randomBytes(nacl.secretbox.keyLength)
+/**
+ * Generate a NaCl secretbox symmetric encryption key.
+ *
+ * @returns A base64-encoded key string. Keep it safe!
+ */
+export function generateKey() {
+  return b64
+    .encode(nacl.randomBytes(nacl.secretbox.keyLength))
+    .replace(/=/g, '')
+}
+
+/**
+ * Encrypt data with a new key
+ *
+ * This will generate a key for you on the fly and pass it in the returned
+ * object.
+ *
+ * @param message The data to encrypt (anything JSON-serializable)
+ */
+export function encrypt<T>(
+  message: T
+): {
+  payload: string
+  key: string
+}
+
+/**
+ * Encrypt data with a provided key
+ *
+ * **Security note**: only use this overload if you need to encrypt
+ * multiple pieces of data with the same key.
+ *
+ * Keys can be generated with `generateKey`, or one can be created for you from
+ * calling `encrypt` with a single data argument.
+ *
+ * @param message The data to encrypt (anything JSON-serializable)
+ * @param providedKey The key to use (re-use a key to encrypt multiple messages)
+ */
+export function encrypt<T>(message: T, providedKey: string): string
+
+export function encrypt<T>(message: T, providedKey?: string) {
+  const key = providedKey
+    ? b64.decode(providedKey)
+    : nacl.randomBytes(nacl.secretbox.keyLength)
   const nonce = nacl.randomBytes(nacl.secretbox.nonceLength)
   const payload = utf8.encode(JSON.stringify(message))
   const ciphertext = nacl.secretbox(payload, nonce, key)
+  const output = [
+    '1',
+    b64.encode(nonce),
+    b64.encode(ciphertext).replace(/=/g, '')
+  ].join('.')
+  if (providedKey) {
+    return output
+  }
   return {
-    payload: ['1', b64.encode(nonce), b64.encode(ciphertext)].join('.'),
-    key: b64.encode(key)
+    payload: output,
+    key: b64.encode(key).replace(/=/g, '')
   }
 }
 
+// v1: Accept trailing padding characters `=`, but don't generate them:
 export const PAYLOAD_REGEX_V1 = /^1\.([a-zA-Z0-9-_]{32})\.([a-zA-Z0-9-_]{24,})={0,2}$/
 
 export function decrypt<T>(payload: string, key: string): T {
